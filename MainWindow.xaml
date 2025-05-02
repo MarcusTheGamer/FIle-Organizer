@@ -1,0 +1,62 @@
+﻿<Window x:Class="File_Sorter___Organizer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:File_Sorter___Organizer"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="475" Width="800" WindowStyle="None">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="270*"/>
+            <ColumnDefinition Width="170*"/>
+            <ColumnDefinition Width="380*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu Background="#0a1e3d" Grid.ColumnSpan="3" Foreground="White">
+            <MenuItem Header="hegiegegi"/>
+        </Menu>
+        <!--#0a1e3d, #123645-->
+        
+        <!--#region Column 1-->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <TreeView Margin="20,20,20,20" BorderThickness="2" Grid.RowSpan="1">
+                <TreeViewItem Header="22">
+                    <TreeViewItem Header="23"/>
+                </TreeViewItem>
+                <TreeViewItem Header="22">
+                    <TreeViewItem Header="23"/>
+                </TreeViewItem>
+            </TreeView>
+            <StackPanel Grid.Row="2">
+                <Button Margin="20,0,20,0" Height="30" BorderThickness="2" Content="Browse Folders" Click="BrowseFoldersClick" FontSize="13" Background="Transparent"/>
+            </StackPanel>
+        </Grid>
+        <!--#endregion-->
+        
+        <!--#region Column 2-->
+        <StackPanel Grid.Row="2" Grid.Column="1">
+            <Label Content="Parameters" HorizontalContentAlignment="Center" FontSize="12"/>
+            <Separator/>
+            <CheckBox Content="Test" Margin="5,5,0,0"/>
+            <CheckBox Content="Test" Margin="5,5,0,0"/>
+            <CheckBox Content="Test" Margin="5,5,0,0"/>
+            <CheckBox Content="Test" Margin="5,5,0,0"/>
+            <CheckBox Content="Test" Margin="5,5,0,0"/>
+            <CheckBox Content="Test" Margin="5,5,0,0"/>
+            <CheckBox Content="Test" Margin="5,5,0,0"/>
+            <CheckBox Content="Test" Margin="5,5,0,0"/>
+        </StackPanel>
+        <!--#endregion-->
+
+        <!--#region Column 3-->
+        <!--#endregion-->
+    </Grid>
+</Window>
