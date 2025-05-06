@@ -131,17 +131,6 @@ namespace File_Sorter___Organizer
             foreach (string folder in Directory.GetDirectories(directory))
             {
                 allFiles.AddRange(Directory.GetFiles(folder));
-                /*
-                foreach (string file in Directory.GetFiles(folder))
-                {
-                    allFiles.Add(file);
-                    string fileType = file.Split(".").Last();
-                    if (!uniqueFileTypes.Contains(fileType))
-                    {
-                        uniqueFileTypes.Add(fileType);
-                    }
-                }
-                */
             }
 
             foreach (string file in allFiles)
@@ -184,7 +173,11 @@ namespace File_Sorter___Organizer
             {
                 foreach (string folder in Directory.GetDirectories(directory))
                 {
-                    allFiles.AddRange(Directory.GetFiles(folder));
+                    var dir = new DirectoryInfo(folder);
+                    if (dir.Attributes != FileAttributes.ReadOnly)
+                    {
+                        allFiles.AddRange(Directory.GetFiles(folder));
+                    }
                 }
             }
 
@@ -232,7 +225,8 @@ namespace File_Sorter___Organizer
                 foreach (string folder in Directory.GetDirectories(directory))
                 {
                     string? foundFile = uniqueFileTypes.Find(x => x == folder.Split(@"\").Last().ToLower());
-                    if (foundFile == null)
+                    var dir = new DirectoryInfo(folder);
+                    if (foundFile == null && dir.Attributes != FileAttributes.ReadOnly)
                     {
                         Directory.Delete(folder);
                     }
