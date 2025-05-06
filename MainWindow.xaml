@@ -51,6 +51,7 @@
             <Separator VerticalAlignment="Bottom"/>
             <StackPanel x:Name="ParameterStackPanel" Margin="10,5,0,5" Grid.Row="1" Grid.Column="1">
                 <CheckBox x:Name="SortSubFolderCheckBox" Content="Sort Sub-folders" Margin="0,5,0,0" BorderThickness="2" FontWeight="Bold" BorderBrush="#FF828790"/>
+                <CheckBox x:Name="CapitalizeFolderNamesCheckBox" Content="Capital First Letter" Margin="0,5,0,0" BorderThickness="2" FontWeight="Bold" BorderBrush="#FF828790"/>
             </StackPanel>
             <StackPanel Grid.Row="2" Grid.Column="1">
                 <Button x:Name="EnableAllButton" Click="EnableAllButton_Click" Margin="10,5,10,0" Height="30" FontWeight="Bold" BorderThickness="2" Content="Enable All" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>

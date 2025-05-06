@@ -10,6 +10,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using System.Linq;
+using static System.Net.WebRequestMethods;
+using Microsoft.VisualBasic.FileIO;
 
 namespace File_Sorter___Organizer
 {
@@ -34,10 +37,8 @@ namespace File_Sorter___Organizer
             var dialog = new Microsoft.Win32.OpenFolderDialog();
             dialog.DefaultDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-            // Show open file dialog box
             bool? result = dialog.ShowDialog();
 
-            // Process open file dialog box results
             if (result == true)
             {
                 string directory = dialog.FolderName;
@@ -95,11 +96,6 @@ namespace File_Sorter___Organizer
             }
         }
 
-        private void SortFilesButton_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
         private void ApplyParametersButton_Click(object sender, RoutedEventArgs e)
         {
             InitializePreviewTreeView(PathTextBox.Text);
@@ -111,7 +107,7 @@ namespace File_Sorter___Organizer
             switch(SortComboBox.SelectedIndex)
             {
                 case 0:
-                    SortByFileType(directory);
+                    PreviewSortByFileType(directory);
                     break;
                 case 1:
                     break;
@@ -122,27 +118,127 @@ namespace File_Sorter___Organizer
             }
             
         }
-
-        private void SortByFileType(string directory)
+        
+        private void PreviewSortByFileType(string directory)
         {
+            PreviewTreeView.Items.Clear();
+
+            List<string> allFiles = new List<string>();
             List<string> uniqueFileTypes = new List<string>();
+
+            // Gets all files in base directory
+            allFiles.AddRange(Directory.GetFiles(directory));
             foreach (string folder in Directory.GetDirectories(directory))
             {
+                allFiles.AddRange(Directory.GetFiles(folder));
+                /*
                 foreach (string file in Directory.GetFiles(folder))
                 {
+                    allFiles.Add(file);
                     string fileType = file.Split(".").Last();
                     if (!uniqueFileTypes.Contains(fileType))
                     {
                         uniqueFileTypes.Add(fileType);
                     }
                 }
+                */
             }
+
+            foreach (string file in allFiles)
+            {
+                uniqueFileTypes.Add(file.Split(".").Last());
+            }
+            uniqueFileTypes = uniqueFileTypes.Distinct().ToList();
+            
+            // Makes treeview folders from unique file types
             foreach (string fileType in uniqueFileTypes)
             {
+
                 TreeViewItem fileTypeFolder = new TreeViewItem();
                 fileTypeFolder.Header = fileType;
+                foreach (string file in allFiles)
+                {
+                    if (file.Split(".").Last() == fileType)
+                    {
+                        TreeViewItem fileTypeFile = new TreeViewItem();
+                        fileTypeFile.Header = file.Split(@"\").Last();
+                        fileTypeFolder.Items.Add(fileTypeFile);
+                    }
+                }
+
                 PreviewTreeView.Items.Add(fileTypeFolder);
             }
+        }
+        private void SortFilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            SortFiles(PathTextBox.Text);
+        }
+
+        private void SortFiles(string directory)
+        {
+            List<string> allFiles = new List<string>();
+            List<string> uniqueFileTypes = new List<string>();
+            
+            allFiles.AddRange(Directory.GetFiles(directory));
+            if (SortSubFolderCheckBox.IsChecked == true)
+            {
+                foreach (string folder in Directory.GetDirectories(directory))
+                {
+                    allFiles.AddRange(Directory.GetFiles(folder));
+                }
+            }
+
+            foreach (string file in allFiles)
+            {
+                uniqueFileTypes.Add(file.Split(".").Last());
+            }
+            uniqueFileTypes = uniqueFileTypes.Distinct().ToList();
+
+
+            foreach (string fileType in uniqueFileTypes)
+            {
+                if (!Directory.Exists($@"{directory}\\{fileType}"))
+                {
+                    string firstLetter = CapitalizeFolderNamesCheckBox.IsChecked == true ? fileType[0].ToString().ToUpper() : fileType[0].ToString();
+                    Directory.CreateDirectory($@"{directory}\\{firstLetter + fileType.Substring(1)}");
+                }
+            }
+
+            foreach (string file in allFiles)
+            {
+                if (file.Split(@"\").Last().Split(".").Last() != file.Split(@"\")[^2].ToLower())
+                {
+                    Directory.Move(file, $@"{directory}\\{file.Split(".").Last()}\\{file.Split(@"\").Last()}");
+                }
+            }
+
+            /*
+            foreach (string fileType in uniqueFileTypes)
+            {
+                Directory.CreateDirectory($@"{directory}\\{fileType}");
+
+                foreach (string file in allFiles)
+                {
+                    if (file.Split(".").Last() == fileType)
+                    {
+                        Directory.Move(file, $@"{directory}\\{fileType}\\{file.Split(@"\").Last()}");
+                    }
+                }
+            }
+            */
+
+            if (SortSubFolderCheckBox.IsChecked == true)
+            {
+                foreach (string folder in Directory.GetDirectories(directory))
+                {
+                    string? foundFile = uniqueFileTypes.Find(x => x == folder.Split(@"\").Last().ToLower());
+                    if (foundFile == null)
+                    {
+                        Directory.Delete(folder);
+                    }
+                }
+            }
+            
         }
 
         private void UndoSortingButton_Click(object sender, RoutedEventArgs e)
