@@ -11,14 +11,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Linq;
-using static System.Net.WebRequestMethods;
 using Microsoft.VisualBasic.FileIO;
 
 namespace File_Sorter___Organizer
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -160,26 +156,51 @@ namespace File_Sorter___Organizer
         }
         private void SortFilesButton_Click(object sender, RoutedEventArgs e)
         {
-            SortFiles(PathTextBox.Text);
+            switch (SortComboBox.SelectedIndex)
+            {
+                case 0:
+                    SortFilesByType(PathTextBox.Text);
+                    break;
+                case 1:
+                    SortFilesByName(PathTextBox.Text);
+                    break;
+                case 2:
+                    SortFilesBySize(PathTextBox.Text);
+                    break;
+                case 3:
+                    SortFilesRandomly(PathTextBox.Text);
+                    break;
+            }
+
         }
 
-        private void SortFiles(string directory)
+        List<string> GetFiles(string directory)
         {
             List<string> allFiles = new List<string>();
-            List<string> uniqueFileTypes = new List<string>();
-            
+
             allFiles.AddRange(Directory.GetFiles(directory));
             if (SortSubFolderCheckBox.IsChecked == true)
             {
                 foreach (string folder in Directory.GetDirectories(directory))
                 {
-                    var dir = new DirectoryInfo(folder);
-                    if (dir.Attributes != FileAttributes.ReadOnly)
-                    {
-                        allFiles.AddRange(Directory.GetFiles(folder));
-                    }
+                    allFiles.AddRange(Directory.GetFiles(folder));
                 }
             }
+
+            return allFiles;
+        }
+
+        string CheckForCapitalCheckBox(string word)
+        {
+            return (CapitalizeFolderNamesCheckBox.IsChecked == true ? word[0].ToString().ToUpper() : word[0].ToString()) + word.Substring(1);
+        }
+
+        private void SortFilesByType(string directory)
+        {
+            List<string> allFiles = new List<string>();
+            List<string> uniqueFileTypes = new List<string>();
+
+            allFiles = GetFiles(directory);
 
             foreach (string file in allFiles)
             {
@@ -192,8 +213,7 @@ namespace File_Sorter___Organizer
             {
                 if (!Directory.Exists($@"{directory}\\{fileType}"))
                 {
-                    string firstLetter = CapitalizeFolderNamesCheckBox.IsChecked == true ? fileType[0].ToString().ToUpper() : fileType[0].ToString();
-                    Directory.CreateDirectory($@"{directory}\\{firstLetter + fileType.Substring(1)}");
+                    Directory.CreateDirectory($@"{directory}\\{CheckForCapitalCheckBox(fileType)}");
                 }
             }
 
@@ -205,34 +225,60 @@ namespace File_Sorter___Organizer
                 }
             }
 
-            /*
-            foreach (string fileType in uniqueFileTypes)
-            {
-                Directory.CreateDirectory($@"{directory}\\{fileType}");
-
-                foreach (string file in allFiles)
-                {
-                    if (file.Split(".").Last() == fileType)
-                    {
-                        Directory.Move(file, $@"{directory}\\{fileType}\\{file.Split(@"\").Last()}");
-                    }
-                }
-            }
-            */
-
             if (SortSubFolderCheckBox.IsChecked == true)
             {
                 foreach (string folder in Directory.GetDirectories(directory))
                 {
                     string? foundFile = uniqueFileTypes.Find(x => x == folder.Split(@"\").Last().ToLower());
-                    var dir = new DirectoryInfo(folder);
-                    if (foundFile == null && dir.Attributes != FileAttributes.ReadOnly)
+                    if (foundFile == null)
                     {
                         Directory.Delete(folder);
                     }
                 }
             }
-            
+        }
+
+        private void SortFilesByName(string directory)
+        {
+
+        }
+
+        private void SortFilesBySize(string directory)
+        {
+            Dictionary<string,long> allFiles = new Dictionary<string,long>();
+
+            foreach (string path in GetFiles(directory))
+            {
+                FileInfo fileInfo = new FileInfo(path);
+                allFiles.Add(path, fileInfo.Length);
+            }
+
+            allFiles.OrderBy(x => x.Value);
+
+            Directory.CreateDirectory($@"{directory}\\Less than 50MB");
+            Directory.CreateDirectory($@"{directory}\\Less than 500MB");
+            Directory.CreateDirectory($@"{directory}\\More than 1GB");
+
+            foreach (KeyValuePair<string, long> values in allFiles)
+            {
+                if (values.Value <= 50000000)
+                {
+                    Directory.Move(values.Key, $@"{directory}\\Less than 50MB\\{values.Key.Split(@"\").Last()}");
+                }
+                else if (values.Value <= 500000000)
+                {
+                    Directory.Move(values.Key, $@"{directory}\\Less than 500MB\\{values.Key.Split(@"\").Last()}");
+                }
+                else
+                {
+                    Directory.Move(values.Key, $@"{directory}\\More than 1GB\\{values.Key.Split(@"\").Last()}");
+                }
+            }
+        }
+
+        private void SortFilesRandomly(string directory)
+        {
+
         }
 
         private void UndoSortingButton_Click(object sender, RoutedEventArgs e)
