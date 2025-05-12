@@ -17,9 +17,11 @@ namespace File_Sorter___Organizer
 {
     public partial class MainWindow : Window
     {
+        private bool isInitialized = false;
         public MainWindow()
         {
             InitializeComponent();
+            isInitialized = true;
         }
 
         private void MenuMouseDown(object sender, MouseButtonEventArgs e)
@@ -246,6 +248,7 @@ namespace File_Sorter___Organizer
         private void SortFilesBySize(string directory)
         {
             Dictionary<string,long> allFiles = new Dictionary<string,long>();
+            List<string> folders = new List<string>();
 
             foreach (string path in GetFiles(directory))
             {
@@ -255,23 +258,44 @@ namespace File_Sorter___Organizer
 
             allFiles.OrderBy(x => x.Value);
 
-            Directory.CreateDirectory($@"{directory}\\Less than 50MB");
-            Directory.CreateDirectory($@"{directory}\\Less than 500MB");
-            Directory.CreateDirectory($@"{directory}\\More than 1GB");
+            TextBox lastTextBox = new TextBox();
+            foreach (TextBox textBox in FileSizeDistributionListBox.Items)
+            {
+                Directory.CreateDirectory($@"{directory}\{CheckForCapitalCheckBox($"Less Than {textBox.Text}")}");
+                folders.Add(($@"{directory}\Less Than {textBox.Text}"));
+                lastTextBox = textBox;
+            }
+            Directory.CreateDirectory($@"{directory}\{CheckForCapitalCheckBox($"More Than {lastTextBox.Text}")}");
+            folders.Add($@"{directory}\More than {lastTextBox.Text}");
 
             foreach (KeyValuePair<string, long> values in allFiles)
             {
-                if (values.Value <= 50000000)
+                if (values.Value > Convert.ToInt32(folders[^1].Split(" ").Last()))
                 {
-                    Directory.Move(values.Key, $@"{directory}\\Less than 50MB\\{values.Key.Split(@"\").Last()}");
-                }
-                else if (values.Value <= 500000000)
-                {
-                    Directory.Move(values.Key, $@"{directory}\\Less than 500MB\\{values.Key.Split(@"\").Last()}");
+                    Directory.Move(values.Key, $@"{folders[^1]}\\{values.Key.Split(@"\").Last()}");
                 }
                 else
                 {
-                    Directory.Move(values.Key, $@"{directory}\\More than 1GB\\{values.Key.Split(@"\").Last()}");
+                    for (int i = 0; i < folders.Count - 1; i++)
+                    {
+                        if (values.Value <= Convert.ToInt32(folders[i].Split(" ").Last()))
+                        {
+                            Directory.Move(values.Key, $@"{folders[i]}\\{values.Key.Split(@"\").Last()}");
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (SortSubFolderCheckBox.IsChecked == true)
+            {
+                foreach (string folder in Directory.GetDirectories(directory))
+                {
+                    string? foundFile = folders.Find(x => x.ToLower() == folder.ToLower());
+                    if (foundFile == null)
+                    {
+                        Directory.Delete(folder);
+                    }
                 }
             }
         }
@@ -289,6 +313,41 @@ namespace File_Sorter___Organizer
         private void FileTypeThresholdSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             SliderValueLabel.Content = ((int)FileTypeThresholdSlider.Value).ToString();
+        }
+
+        private void AddToFileSizeListBox_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = new TextBox();
+            textBox.FontSize = 10;
+            textBox.BorderThickness = new Thickness(1);
+
+            FileSizeDistributionListBox.Items.Add(textBox);
+        }
+
+        private void RemoveToFileSizeListBox_Click(object sender, RoutedEventArgs e)
+        {
+            FileSizeDistributionListBox.Items.Remove(^1);
+        }
+        private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (isInitialized)
+            {
+                switch (SortComboBox.SelectedIndex)
+                {
+                    case 0:
+                        AmountThresholdStackPanel.IsEnabled = true;
+                        SizeRangeStackPanel.IsEnabled = false;
+                        break;
+                    case 1:
+                        AmountThresholdStackPanel.IsEnabled = false;
+                        SizeRangeStackPanel.IsEnabled = false;
+                        break;
+                    case 2:
+                        AmountThresholdStackPanel.IsEnabled = false;
+                        SizeRangeStackPanel.IsEnabled = true;
+                        break;
+                }
+            }
         }
     }
 }

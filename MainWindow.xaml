@@ -71,7 +71,7 @@
             <Separator VerticalAlignment="Bottom"/>
             <TreeView x:Name="PreviewTreeView" Margin="20,10,20,5" FontWeight="Bold" BorderThickness="2" Grid.Row="1"/>
             <StackPanel Grid.Row="2">
-                <ComboBox x:Name="SortComboBox" Margin="20,5,20,5" Height="30" SelectedIndex="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" BorderThickness="2" BorderBrush="#FF828790">
+                <ComboBox x:Name="SortComboBox" SelectionChanged="SortComboBox_SelectionChanged" Margin="20,5,20,5" Height="30" SelectedIndex="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" BorderThickness="2" BorderBrush="#FF828790">
                     <ComboBoxItem Content="File Types"/>
                     <ComboBoxItem Content="Matching Names"/>
                     <ComboBoxItem Content="File Sizes"/>
@@ -91,9 +91,18 @@
             <Label Content="Additonal Settings" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
             <Separator VerticalAlignment="Bottom"/>
             <StackPanel Grid.Row="1">
-                <Label Content="Type Amount Threshold" HorizontalContentAlignment="Center" FontWeight="Bold"/>
-                <Slider x:Name="FileTypeThresholdSlider" ValueChanged="FileTypeThresholdSlider_ValueChanged" Margin="20,5,20,0" Maximum="50"/>
-                <Label x:Name="SliderValueLabel" Content="10" Margin="20,5,20,0" HorizontalContentAlignment="Center" FontWeight="Bold"/>
+                <StackPanel x:Name="AmountThresholdStackPanel">
+                    <Label Content="Type Amount Threshold" HorizontalContentAlignment="Center" FontWeight="Bold"/>
+                    <Slider x:Name="FileTypeThresholdSlider" ValueChanged="FileTypeThresholdSlider_ValueChanged" Margin="20,5,20,0" Maximum="50"/>
+                    <Label x:Name="SliderValueLabel" Content="10" Margin="20,5,20,0" HorizontalContentAlignment="Center" FontWeight="Bold"/>
+                </StackPanel>
+                <StackPanel x:Name="SizeRangeStackPanel" Height="210">
+                    <ListView x:Name="FileSizeDistributionListBox" BorderThickness="2" Height="65" Margin="20,0,20,0"/>
+                    <Button x:Name="AddToFileSizeListBox" Click="AddToFileSizeListBox_Click" Height="25" VerticalAlignment="Bottom" Margin="20,5,20,0" Background="Transparent" Content="Add Range" FontWeight="Bold"/>
+                    <Button x:Name="RemoveToFileSizeListBox" Click="RemoveToFileSizeListBox_Click"  Height="25" VerticalAlignment="Bottom" Margin="20,5,20,0" Background="Transparent" Content="Remove Range" FontWeight="Bold"/>
+                    <TextBox Text="Order must be from low to high" Height="40" IsReadOnly="True" Margin="20,5,20,0" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold" BorderThickness="0"/>
+                    <TextBox Text="Number means lower file size than number" Height="40" IsReadOnly="True" Margin="20,5,20,0" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold" BorderThickness="0"/>
+                </StackPanel>
             </StackPanel>
             <StackPanel Grid.Row="2">
                 <Grid Height="30" Margin="20,5,20,0">
