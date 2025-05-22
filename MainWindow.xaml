@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:File_Organizer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="475" Width="800" WindowStyle="None">
+        Title="MainWindow" Height="475" Width="800" MinHeight="425" MinWidth="550" WindowStyle="None">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="270*"/>
@@ -17,10 +17,14 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Menu Background="#0a1e3d" Grid.ColumnSpan="4" MouseDown="MenuMouseDown" Foreground="White">
-            <MenuItem Header="File Organizer"/>
-            <MenuItem Header="File"/>
-        </Menu>
+        <DockPanel Background="#0a1e3d" Grid.ColumnSpan="4" MouseDown="MenuMouseDown">
+            <Label HorizontalAlignment="Left" Content="File Sorter and Organizer" FontWeight="Bold" Foreground="White" VerticalContentAlignment="Center"/>
+            <DockPanel Width="80" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button x:Name="minimizeButton" Click="minimizeButton_Click" Width="20" Height="20" Margin="5,0,5,0" Background="White" BorderThickness="2" Content="-" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                <Button x:Name="fullscreenButton" Click="fullscreenButton_Click" Width="20" Height="20" Background="White" BorderThickness="2" Content="◻" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                <Button x:Name="quitButton" Click="quitButton_Click" Width="20" Height="20" Margin="5,0,5,0" Background="White" BorderThickness="2" Content="X" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            </DockPanel>
+        </DockPanel>
         <!--#0a1e3d, #123645-->
 
         <!--#region Column 1-->
@@ -33,10 +37,14 @@
             <Label Content="Treeview" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
             <Separator VerticalAlignment="Bottom"/>
             <TreeView x:Name="PathTreeView" Margin="20,10,20,5" FontWeight="Bold" BorderThickness="2" Grid.Row="1"/>
-            <StackPanel Grid.Row="2">
-                <Button x:Name="BrowseFoldersButton" Click="BrowseFoldersButton_Click" Margin="20,5,20,0" Height="30" FontWeight="Bold" BorderThickness="2" Content="Browse Folders" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>
-                <TextBox x:Name="PathTextBox" Margin="20,10,20,0" Height="30" FontWeight="Bold" BorderThickness="2" Text="Path" VerticalContentAlignment="Center" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>
-            </StackPanel>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Button x:Name="BrowseFoldersButton" Click="BrowseFoldersButton_Click" Margin="20,5,20,5" FontWeight="Bold" BorderThickness="2" Content="Browse Folders" FontSize="15" Background="Transparent" BorderBrush="#FF828790"/>
+                <TextBox x:Name="PathTextBox" Grid.Row="1" Margin="20,5,20,5" Padding="0,2,0,2" FontWeight="Bold" BorderThickness="2" Text="Path" VerticalContentAlignment="Center" FontSize="14" Background="Transparent" BorderBrush="#FF828790"/>
+            </Grid>
         </Grid>
         <!--#endregion-->
 
@@ -53,10 +61,14 @@
                 <CheckBox x:Name="SortSubFolderCheckBox" Content="Sort Sub-folders" Margin="0,5,0,0" BorderThickness="2" FontWeight="Bold" BorderBrush="#FF828790"/>
                 <CheckBox x:Name="CapitalizeFolderNamesCheckBox" Content="Capital First Letter" Margin="0,5,0,0" BorderThickness="2" FontWeight="Bold" BorderBrush="#FF828790"/>
             </StackPanel>
-            <StackPanel Grid.Row="2" Grid.Column="1">
-                <Button x:Name="EnableAllButton" Click="EnableAllButton_Click" Margin="10,5,10,0" Height="30" FontWeight="Bold" BorderThickness="2" Content="Enable All" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>
-                <Button x:Name="DisableAllButton" Click="DisableAllButton_Click" Margin="10,10,10,0" Height="30" FontWeight="Bold" BorderThickness="2" Content="Disable All" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>
-            </StackPanel>
+            <Grid Grid.Row="2" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Button x:Name="EnableAllButton" Click="EnableAllButton_Click" Margin="10,5,10,5" FontWeight="Bold" BorderThickness="2" Content="Enable All" FontSize="15" Background="Transparent" BorderBrush="#FF828790"/>
+                <Button x:Name="DisableAllButton" Click="DisableAllButton_Click" Margin="10,5,10,5" Grid.Row="1" FontWeight="Bold" BorderThickness="2" Content="Disable All" FontSize="15" Background="Transparent" BorderBrush="#FF828790"/>
+            </Grid>
         </Grid>
         <!--#endregion-->
 
@@ -67,18 +79,22 @@
                 <RowDefinition Height="4*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-            <Label Content="Preview" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
+            <Label Visibility="Hidden" Content="Preview" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
             <Separator VerticalAlignment="Bottom"/>
-            <TreeView x:Name="PreviewTreeView" Margin="20,10,20,5" FontWeight="Bold" BorderThickness="2" Grid.Row="1"/>
-            <StackPanel Grid.Row="2">
-                <ComboBox x:Name="SortComboBox" SelectionChanged="SortComboBox_SelectionChanged" Margin="20,5,20,5" Height="30" SelectedIndex="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" BorderThickness="2" BorderBrush="#FF828790">
+            <TreeView Visibility="Hidden" x:Name="PreviewTreeView" Margin="20,10,20,5" FontWeight="Bold" BorderThickness="2" Grid.Row="1"/>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <ComboBox x:Name="SortComboBox" SelectionChanged="SortComboBox_SelectionChanged" Margin="20,7,20,7" FontSize="15" SelectedIndex="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" BorderThickness="2" BorderBrush="#FF828790">
                     <ComboBoxItem Content="File Types"/>
-                    <ComboBoxItem Content="Matching Names"/>
+                    <!--<ComboBoxItem Content="Matching Names"/>-->
                     <ComboBoxItem Content="File Sizes"/>
                     <ComboBoxItem Content="Alphabetical"/>
                 </ComboBox>
-                <Button x:Name="ApplyParametersButton" Click="ApplyParametersButton_Click" Margin="20,5,20,0" Height="30" FontWeight="Bold" BorderThickness="2" Content="Apply Parameters" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>
-            </StackPanel>
+                <Button Visibility="Hidden" x:Name="ApplyParametersButton" Click="ApplyParametersButton_Click" Grid.Row="1" Margin="20,5,20,0" VerticalAlignment="Center" FontWeight="Bold" BorderThickness="2" Content="Apply Parameters" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>
+            </Grid>
         </Grid>
         <!--#endregion-->
 
@@ -91,27 +107,33 @@
             </Grid.RowDefinitions>
             <Label Content="Additonal Settings" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
             <Separator VerticalAlignment="Bottom"/>
-            <StackPanel Grid.Row="1">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
                 <StackPanel x:Name="AmountThresholdStackPanel">
                     <Label Content="Type Amount Threshold" HorizontalContentAlignment="Center" FontWeight="Bold"/>
                     <Slider x:Name="FileTypeThresholdSlider" ValueChanged="FileTypeThresholdSlider_ValueChanged" Margin="20,5,20,0" Maximum="50"/>
                     <Label x:Name="SliderValueLabel" Content="10" Margin="20,5,20,0" HorizontalContentAlignment="Center" FontWeight="Bold"/>
                 </StackPanel>
-                <StackPanel x:Name="SizeRangeStackPanel" Height="210">
+                <StackPanel x:Name="SizeRangeStackPanel">
                     <ListView x:Name="FileSizeDistributionListBox" BorderThickness="2" Height="65" Margin="20,0,20,0"/>
                     <Button x:Name="AddToFileSizeListBox" Click="AddToFileSizeListBox_Click" Height="25" VerticalAlignment="Bottom" Margin="20,5,20,0" Background="Transparent" Content="Add Range" FontWeight="Bold"/>
                     <Button x:Name="RemoveToFileSizeListBox" Click="RemoveToFileSizeListBox_Click"  Height="25" VerticalAlignment="Bottom" Margin="20,5,20,0" Background="Transparent" Content="Remove Range" FontWeight="Bold"/>
-                    <TextBox Text="Order must be from low to high" Height="40" IsReadOnly="True" Margin="20,5,20,0" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold" BorderThickness="0"/>
-                    <TextBox Text="Number means lower file size than number" Height="40" IsReadOnly="True" Margin="20,5,20,0" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold" BorderThickness="0"/>
+                    <TextBox Text="Order must be from low to high" IsReadOnly="True" Margin="20,5,20,0" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold" BorderThickness="0"/>
+                    <TextBox Text="Number means lower file size than number" IsReadOnly="True" Margin="20,10,20,0" TextWrapping="Wrap" TextAlignment="Center" FontWeight="Bold" BorderThickness="0"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Grid.Row="2">
-                <Grid Height="30" Margin="20,5,20,0">
-                    <ProgressBar Height="30" BorderThickness="2"/>
-                    <Button x:Name="SortFilesButton" Click="SortFilesButton_Click" IsEnabled="False" Height="30" FontWeight="Bold" BorderThickness="2" Content="Sort Files" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>
+            </ScrollViewer>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid Margin="20,5,20,5">
+                    <ProgressBar VerticalAlignment="Stretch"  BorderThickness="2"/>
+                    <Button x:Name="SortFilesButton" Click="SortFilesButton_Click" IsEnabled="False" VerticalAlignment="Stretch" FontWeight="Bold" BorderThickness="2" Content="Sort Files" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>
                 </Grid>
-                <Button x:Name="UndoSortingButton" Click="UndoSortingButton_Click" IsEnabled="False" Margin="20,10,20,0" Height="30" FontWeight="Bold" BorderThickness="2" Content="Undo Sorting" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>
-            </StackPanel>
+                <Button x:Name="UndoSortingButton" Click="UndoSortingButton_Click" Visibility="Hidden" IsEnabled="False" Margin="20,5,20,5" Grid.Row="1" VerticalAlignment="Center" FontWeight="Bold" BorderThickness="2" Content="Undo Sorting" FontSize="13" Background="Transparent" BorderBrush="#FF828790"/>
+            </Grid>
         </Grid>
         <!--#endregion-->
     </Grid>

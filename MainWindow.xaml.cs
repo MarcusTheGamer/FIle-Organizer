@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Linq;
 using Microsoft.VisualBasic.FileIO;
+using System.Globalization;
 
 namespace File_Organizer
 {
@@ -163,13 +164,14 @@ namespace File_Organizer
                 case 0:
                     SortFilesByType(PathTextBox.Text);
                     break;
+                /*
                 case 1:
                     SortFilesByName(PathTextBox.Text);
-                    break;
-                case 2:
+                    break; */
+                case 1:
                     SortFilesBySize(PathTextBox.Text);
                     break;
-                case 3:
+                case 2:
                     SortFilesAlphabetically(PathTextBox.Text);
                     break;
             }
@@ -364,16 +366,37 @@ namespace File_Organizer
                         AmountThresholdStackPanel.IsEnabled = true;
                         SizeRangeStackPanel.IsEnabled = false;
                         break;
-                    case 1:
+                    /*case 1:
                         AmountThresholdStackPanel.IsEnabled = false;
                         SizeRangeStackPanel.IsEnabled = false;
-                        break;
-                    case 2:
+                        break; */
+                    case 1:
                         AmountThresholdStackPanel.IsEnabled = false;
                         SizeRangeStackPanel.IsEnabled = true;
                         break;
+                    case 2:
+                        AmountThresholdStackPanel.IsEnabled = false;
+                        SizeRangeStackPanel.IsEnabled = false;
+                        break;
                 }
             }
+        }
+
+        private void quitButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private bool isMaximized;
+        private void fullscreenButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = isMaximized ? WindowState.Normal : WindowState.Maximized;
+            isMaximized = !isMaximized;
+        }
+
+        private void minimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
         }
     }
 }
