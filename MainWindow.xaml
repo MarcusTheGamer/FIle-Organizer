@@ -109,7 +109,7 @@
             <Separator VerticalAlignment="Bottom"/>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <StackPanel x:Name="AmountThresholdStackPanel">
+                <StackPanel x:Name="AmountThresholdStackPanel" IsEnabled="False">
                     <Label Content="Type Amount Threshold" HorizontalContentAlignment="Center" FontWeight="Bold"/>
                     <Slider x:Name="FileTypeThresholdSlider" ValueChanged="FileTypeThresholdSlider_ValueChanged" Margin="20,5,20,0" Maximum="50"/>
                     <Label x:Name="SliderValueLabel" Content="10" Margin="20,5,20,0" HorizontalContentAlignment="Center" FontWeight="Bold"/>
