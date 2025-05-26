@@ -13,6 +13,7 @@ using Microsoft.Win32;
 using System.Linq;
 using Microsoft.VisualBasic.FileIO;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace File_Organizer
 {
@@ -50,7 +51,6 @@ namespace File_Organizer
         private void InitializeTreeView(string directory)
         {
             PathTreeView.Items.Clear();
-
             string[] folders = Directory.GetDirectories(directory);
             foreach (string folder in folders)
             {
@@ -141,7 +141,6 @@ namespace File_Organizer
             // Makes treeview folders from unique file types
             foreach (string fileType in uniqueFileTypes)
             {
-
                 TreeViewItem fileTypeFolder = new TreeViewItem();
                 fileTypeFolder.Header = fileType;
                 foreach (string file in allFiles)
@@ -164,7 +163,7 @@ namespace File_Organizer
                 case 0:
                     SortFilesByType(PathTextBox.Text);
                     break;
-                /*
+                    /*
                 case 1:
                     SortFilesByName(PathTextBox.Text);
                     break; */
@@ -182,6 +181,9 @@ namespace File_Organizer
         {
             List<string> allFiles = new List<string>();
 
+            DirectoryInfo info = new DirectoryInfo(directory);
+            List<string> folders = info.EnumerateDirectories("*.", System.IO.SearchOption.AllDirectories ).Select(x => x.FullName).ToList();
+
             allFiles.AddRange(Directory.GetFiles(directory));
             if (SortSubFolderCheckBox.IsChecked == true)
             {
@@ -191,7 +193,7 @@ namespace File_Organizer
                 }
             }
 
-            return allFiles;
+            return CheckForZipCheckBox(allFiles);
         }
 
         string CheckForCapitalCheckBox(string word)
@@ -212,6 +214,21 @@ namespace File_Organizer
             }
             uniqueFileTypes = uniqueFileTypes.Distinct().ToList();
 
+            if (FileTypeThresholdSlider.Value > 0)
+            {
+                int count;
+                List<string> discardList = new List<string>();
+                foreach (string uniqueFileType in uniqueFileTypes)
+                {
+                    count = allFiles.FindAll(x => x.Split('.').Last() == uniqueFileType).Count();
+                    if (count < Convert.ToInt32(SliderValueLabel.Content))
+                    {
+                        allFiles.RemoveAll(x => x.Split('.').Last() == uniqueFileType);
+                        discardList.Add(uniqueFileType);
+                    }
+                }
+                uniqueFileTypes.RemoveAll(x => discardList.Contains(x));
+            }
 
             foreach (string fileType in uniqueFileTypes)
             {
@@ -225,7 +242,10 @@ namespace File_Organizer
             {
                 if (file.Split(@"\").Last().Split(".").Last() != file.Split(@"\")[^2].ToLower())
                 {
-                    Directory.Move(file, $@"{directory}\\{file.Split(".").Last()}\\{file.Split(@"\").Last()}");
+                    if (!Directory.Exists($@"{directory}\\{file.Split(".").Last()}\\{file.Split(@"\").Last()}"))
+                    {
+                        Directory.Move(file, $@"{directory}\\{file.Split(".").Last()}\\{file.Split(@"\").Last()}");
+                    }
                 }
             }
 
@@ -233,8 +253,8 @@ namespace File_Organizer
             {
                 foreach (string folder in Directory.GetDirectories(directory))
                 {
-                    string? foundFile = uniqueFileTypes.Find(x => x == folder.Split(@"\").Last().ToLower());
-                    if (foundFile == null)
+                    int? foundFiles = Directory.GetFileSystemEntries(folder).Count();
+                    if (foundFiles == 0)
                     {
                         Directory.Delete(folder);
                     }
@@ -333,6 +353,15 @@ namespace File_Organizer
 
         }
 
+        private List<string> CheckForZipCheckBox(List<string> stringList)
+        {
+            if (ExcludeZipCheckBox.IsChecked == true)
+            {
+                stringList.RemoveAll(x => x.Split('.').Last() == "zip");
+            }
+            return stringList;
+        }
+
         private void UndoSortingButton_Click(object sender, RoutedEventArgs e)
         {
 
@@ -356,6 +385,7 @@ namespace File_Organizer
         {
             FileSizeDistributionListBox.Items.Remove(^1);
         }
+
         private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (isInitialized)
@@ -366,7 +396,8 @@ namespace File_Organizer
                         AmountThresholdStackPanel.IsEnabled = true;
                         SizeRangeStackPanel.IsEnabled = false;
                         break;
-                    /*case 1:
+                        /*
+                    case 1:
                         AmountThresholdStackPanel.IsEnabled = false;
                         SizeRangeStackPanel.IsEnabled = false;
                         break; */
@@ -397,6 +428,19 @@ namespace File_Organizer
         private void minimizeButton_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
+        }
+
+        private void SortFolderCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (SortFolderCheckBox.IsChecked == true)
+            {
+                SortSubFolderCheckBox.IsEnabled = true;
+            }
+            else
+            {
+                SortSubFolderCheckBox.IsEnabled = false;
+                SortSubFolderCheckBox.IsChecked = false;
+            }
         }
     }
 }

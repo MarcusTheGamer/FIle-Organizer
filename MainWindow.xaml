@@ -58,8 +58,10 @@
             <Label Content="Parameters" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
             <Separator VerticalAlignment="Bottom"/>
             <StackPanel x:Name="ParameterStackPanel" Margin="10,5,0,5" Grid.Row="1" Grid.Column="1">
-                <CheckBox x:Name="SortSubFolderCheckBox" Content="Sort Sub-folders" Margin="0,5,0,0" BorderThickness="2" FontWeight="Bold" BorderBrush="#FF828790"/>
+                <CheckBox x:Name="SortFolderCheckBox" Visibility="Collapsed" Click="SortFolderCheckBox_Click" Content="Sort folders" Margin="0,5,0,0" BorderThickness="2" FontWeight="Bold" BorderBrush="#FF828790"/>
+                <CheckBox x:Name="SortSubFolderCheckBox" IsEnabled="true" Content="Sort Folders" Margin="0,5,0,0" BorderThickness="2" FontWeight="Bold" BorderBrush="#FF828790"/>
                 <CheckBox x:Name="CapitalizeFolderNamesCheckBox" Content="Capital First Letter" Margin="0,5,0,0" BorderThickness="2" FontWeight="Bold" BorderBrush="#FF828790"/>
+                <CheckBox x:Name="ExcludeZipCheckBox" Content="Exclude .zip Files" Margin="0,5,0,0" BorderThickness="2" FontWeight="Bold" BorderBrush="#FF828790"/>
             </StackPanel>
             <Grid Grid.Row="2" Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -109,12 +111,12 @@
             <Separator VerticalAlignment="Bottom"/>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <StackPanel x:Name="AmountThresholdStackPanel" IsEnabled="False">
+                <StackPanel x:Name="AmountThresholdStackPanel">
                     <Label Content="Type Amount Threshold" HorizontalContentAlignment="Center" FontWeight="Bold"/>
-                    <Slider x:Name="FileTypeThresholdSlider" ValueChanged="FileTypeThresholdSlider_ValueChanged" Margin="20,5,20,0" Maximum="50"/>
-                    <Label x:Name="SliderValueLabel" Content="10" Margin="20,5,20,0" HorizontalContentAlignment="Center" FontWeight="Bold"/>
+                    <Slider x:Name="FileTypeThresholdSlider" Value="0" Minimum="0" ValueChanged="FileTypeThresholdSlider_ValueChanged" Margin="20,5,20,0" Maximum="50"/>
+                    <Label x:Name="SliderValueLabel" Content="0" Margin="20,5,20,0" HorizontalContentAlignment="Center" FontWeight="Bold"/>
                 </StackPanel>
-                <StackPanel x:Name="SizeRangeStackPanel">
+                <StackPanel x:Name="SizeRangeStackPanel" IsEnabled="False">
                     <ListView x:Name="FileSizeDistributionListBox" BorderThickness="2" Height="65" Margin="20,0,20,0"/>
                     <Button x:Name="AddToFileSizeListBox" Click="AddToFileSizeListBox_Click" Height="25" VerticalAlignment="Bottom" Margin="20,5,20,0" Background="Transparent" Content="Add Range" FontWeight="Bold"/>
                     <Button x:Name="RemoveToFileSizeListBox" Click="RemoveToFileSizeListBox_Click"  Height="25" VerticalAlignment="Bottom" Margin="20,5,20,0" Background="Transparent" Content="Remove Range" FontWeight="Bold"/>
