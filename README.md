@@ -12,7 +12,7 @@ Please do not attempt to sort root directories of Windows (System32, Windows, Pr
 ## Sorting Parameters
 - [x] Toggle including sub-folders in sorting (Only applied to folders in root directory, not folders in folders, will change in the future)
 - [x] Toggle capital first letters for new folders
-- [ ] Toggle excluding zip files from sorting
+- [x] Toggle excluding zip files from sorting
 ## Other Quality of Life Features
 - [ ] Undo sorting button
 - [ ] Preview planned sorting
